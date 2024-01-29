@@ -21,12 +21,12 @@ const Search = () => {
   const { currentUser } = useContext(AuthContext);
 
   const handleSearch = async () => {
-    const query = query(
+    const q = query(
       collection(db, "users"),
       where("displayName", "==", username)
     );
     try {
-      const querySnapshot = await getDocs(query);
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         setUser(doc.data());
       });
@@ -36,8 +36,8 @@ const Search = () => {
     }
   };
   //when user press enter after inputting a name
-  const handleKey = async () => {
-    err.code === "Enter" && handleSearch();
+  const handleKey = async (e) => {
+    e.code === "Enter" && handleSearch();
   };
 
   const handleSelect = async () => {
@@ -87,7 +87,7 @@ const Search = () => {
         <input
           type="text"
           placeholder="Find a user"
-          className="bg-transparent  border-none text-white outline-none placeholder:text-gray-200"
+          className="bg-transparent w-full border-none text-white outline-none placeholder:text-gray-200"
           onKeyDown={handleKey}
           onChange={(e) => setUsername(e.target.value)}
           value={username}
@@ -95,7 +95,7 @@ const Search = () => {
       </div>
       {err && <span>User not found!</span>}
       {user && (
-        <div className="p-3 flex items-center  gap-3 text-white cursor-pointer hover:bg-purple-900 ">
+        <div className="p-3 flex items-center  gap-3 text-white cursor-pointer hover:bg-purple-900 " onClick={handleSelect}>
           <img src="" alt="" className="w-12 h-12 rounded-full " />
           <div>
             <span className="font-bold text-lg ">{user.displayName}</span>

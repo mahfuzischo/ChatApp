@@ -4,7 +4,7 @@ import { AuthContext } from "./AuthContext";
 export const ChatContext = createContext();
 
 const ChatContextProvider = ({ children }) => {
-  // const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const INITIAL_STATE = {
     chatId: "null",
     user: {},
@@ -15,10 +15,10 @@ const ChatContextProvider = ({ children }) => {
       case "CHANGE_USER":
         return {
           user: action.payload,
-          // chatId:
-          //   currentUser.uid > action.payload.uid
-          //     ? currentUser.uid + action.payload.uid
-          //     : action.payload.uid + currentUser.uid,
+          chatId:
+            currentUser.uid > action.payload.uid
+              ? currentUser.uid + action.payload.uid
+              : action.payload.uid + currentUser.uid,
         };
 
       default:

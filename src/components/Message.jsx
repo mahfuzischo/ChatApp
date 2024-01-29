@@ -15,8 +15,8 @@ const Message = ({ message }) => {
   return (
     <div
       ref={ref}
-      className={`message flex gap-20 mb-20 ${
-        message.senderId === currentUser.uid ? "owner" : ""
+      className={`flex gap-5 mb-4 ${
+        message.senderId === currentUser.uid ? "flex-row-reverse" : ""
       }`}
     >
       <div className="flex flex-col text-gray-500 font-light">
@@ -27,13 +27,13 @@ const Message = ({ message }) => {
               : data.user.photoURL
           }
           alt=""
-          className="w-40 h-40 rounded-full object-cover"
+          className="w-10 h-10 rounded-full object-cover"
         />
-        <span>just now</span>
+        <span>{message.date.toDate().toLocaleTimeString('en-US')}</span>
       </div>
-      <div className="messageContent max-w-80 flex flex-col gap-10">
-        <p className="bg-white p-10 rounded-br-10 max-w-max">{message.text}</p>
-        {message.img && <img src={message.img} alt="" className="w-50" />}
+      <div className="messageContent max-w-80 flex flex-col gap-4">
+        <p className="bg-white p-3 rounded-br-lg max-w-max">{message.text}</p>
+        {message.img && <img src={message.img} alt="" className="w-4/5 border-4 border-slate-400 rounded-md overflow-hidden border-solid" />}
       </div>
     </div>
   );

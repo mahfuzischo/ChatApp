@@ -1,24 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firbase";
+import { AuthContext } from './../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState([]);
   const [password, setPassword] = useState([]);
   const [err, setErr] = useState(false);
   const navigate = useNavigate()
+  
+  const {signInUser}=useContext(AuthContext)
 
-  const handleSubmit = async (e) => {
+  const handleSubmit =(e) => {
     e.preventDefault();
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
-    } catch (err) {
-      console.log(err);
-      setErr(true);
-    }
+      signInUser(email, password).then(res=>{
+        navigate("/");
+      })
+     
   };
 
   return (

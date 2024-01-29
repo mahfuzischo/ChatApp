@@ -8,13 +8,12 @@ const PrivateRoute = ({ chilren }) => {
   // const location = useLocation();
 
   console.log("from private route");
-  if (currentUser?.email) {
+  if (currentUser) {
     return <Outlet />;
-  }
-  if (loading) {
+  } else if (loading) {
     return <progress className="progress w-56"></progress>;
   }
-  return <Navigate to="/Login"></Navigate>;
+  return <Navigate to="/login"></Navigate>;
 };
 
 export default PrivateRoute;

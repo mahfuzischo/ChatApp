@@ -6,13 +6,14 @@ import { ChatContext } from "../context/ChatContext";
 const Chat = () => {
   const { data } = useContext(ChatContext);
   return (
-    <div className=" w-2/3">
-      <div className="h-12 flex justify-between items-center bg-purple-200 p-3 text-gray-400">
+    <div className=" w-3/5  h-4/5">
+      <div className="h-14 flex justify-between items-center rounded-tr-lg bg-purple-600 p-3 text-gray-200">
+      <img src={data.user?.photoURL} className="w-10 rounded-full ml-3 overflow-hidden"/>
         <span>{data.user?.displayName}</span>
-        <div className="flex gap-3">
-          <img src="../../images/cam.png" alt="" />
-          <img src="../../images/add.png" alt="" />
-          <img src="../../images/more.png" alt="" />
+        <div className="flex gap-3 items-center">
+          <img src="../../images/cam.png" alt="" className="w-6 h-6" />
+          <img src="../../images/add.png" alt="" className="w-6 h-6" />
+          <img src="../../images/more.png" alt="" className="w-6 h-6" />
         </div>
       </div>
       <Messages />

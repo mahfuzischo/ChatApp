@@ -4,7 +4,7 @@ import Search from './Search';
 import Chats from './Chats';
 const Sidebar = () => {
     return (
-        <div className='w-1/3 bg-purple-800'>
+        <div className='w-2/5 bg-purple-800 rounded-l-lg overflow-hidden'>
             <Navbar/>
             <Search/>
             <Chats/>

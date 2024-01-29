@@ -3,8 +3,7 @@ import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, db, storage } from "../firbase";
 import { doc, setDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
-import { AuthContext } from "../context/AuthContext";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref } from "firebase/storage";
 import { uploadBytesResumable } from "firebase/storage";
 import { getDownloadURL } from "firebase/storage";
@@ -15,7 +14,7 @@ const Register = () => {
   const [password, setPassword] = useState([]);
   const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [files, setFile] = useState([]);
+  const [files, setFiles] = useState([]);
 
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
@@ -25,7 +24,7 @@ const Register = () => {
     const displayName = username;
     const emails = email;
     const pass = password;
-    const file = files[0];
+    const file = files;
 
     try {
       const res = await createUserWithEmailAndPassword(auth, emails, pass);
@@ -33,37 +32,84 @@ const Register = () => {
       const date = new Date().getTime();
       const storageRef = ref(storage, `${displayName + date}`);
 
-      await uploadBytesResumable(storageRef, file).then(() => {
-        getDownloadURL(storageRef).then(async (downloadURL) => {
-          try {
-            //add profile image
-            await updateProfile(res.user, {
-              displayName,
-              photoURL: downloadURL,
-            });
-            //store user data on firestore database
-            await setDoc(doc(db, "users", res.user.uid), {
-              uid: res.user.uid,
-              displayName,
-              email: emails,
-              photoURL: downloadURL,
-            });
-            //Create empty doc for user chats on firestore
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-            await setDoc(doc(db, "userChats", res.user.uid), {});
-            navigate("/Login");
-          } catch (err) {
-            console.log(err);
-            setErr(true);
-            setLoading(false);
-          }
-        });
-      });
+      uploadTask.on(
+        (error) => {
+          console.log(error);
+        },
+        () =>
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            try {
+              //add profile image
+              await updateProfile(res.user, {
+                displayName,
+                photoURL: downloadURL,
+              });
+              //store user data on firestore database
+              await setDoc(doc(db, "users", res.user.uid), {
+                uid: res.user.uid,
+                displayName,
+                email: emails,
+                photoURL: downloadURL,
+              });
+              //Create empty doc for user chats on firestore
+
+              await setDoc(doc(db, "userChats", res.user.uid), {});
+              navigate("/Login");
+            } catch (err) {
+              console.log(err);
+              setErr(true);
+              setLoading(false);
+            }
+          })
+      );
     } catch (err) {
       console.log(err);
       setErr(true);
       setLoading(false);
     }
+
+    //old
+    // try {
+    //   const res = await createUserWithEmailAndPassword(auth, emails, pass);
+    //   //create a unique image name
+    //   const date = new Date().getTime();
+    //   const storageRef = ref(storage, `${displayName + date}`);
+
+    //   const uploadTask = uploadBytesResumable(storageRef, img);
+
+    //   await uploadBytesResumable(storageRef, file).then(() => {
+    //     getDownloadURL(storageRef).then(async (downloadURL) => {
+    //       try {
+    //         //add profile image
+    //         await updateProfile(res.user, {
+    //           displayName,
+    //           photoURL: downloadURL,
+    //         });
+    //         //store user data on firestore database
+    //         await setDoc(doc(db, "users", res.user.uid), {
+    //           uid: res.user.uid,
+    //           displayName,
+    //           email: emails,
+    //           photoURL: downloadURL,
+    //         });
+    //         //Create empty doc for user chats on firestore
+
+    //         await setDoc(doc(db, "userChats", res.user.uid), {});
+    //         navigate("/Login");
+    //       } catch (err) {
+    //         console.log(err);
+    //         setErr(true);
+    //         setLoading(false);
+    //       }
+    //     });
+    //   });
+    // } catch (err) {
+    //   console.log(err);
+    //   setErr(true);
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -100,8 +146,8 @@ const Register = () => {
             style={{ display: "none" }}
             type="file"
             id="file"
-            className="hidden"
-            onChange={(e) => setFile(e.target.value)}
+            // className="hidden"
+            onChange={(e) => setFiles(e.target.files[0])}
           />
           <label
             htmlFor="file"
