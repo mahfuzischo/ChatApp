@@ -26,7 +26,7 @@ const Chats = () => {
   const handleSelect = (u) => {
     dispatch({ type: "CHANGE_USER", payload: u });
   };
-
+// Array[0] contains ID and Array[1] contains Object while fetching from firebase 
   return (
     <div className="w-full text-sm">
       {Object.entries(chats)
